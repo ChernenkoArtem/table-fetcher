@@ -1,16 +1,10 @@
 <template>
-<button @click="btnDataHandler">Get data</button>
+<button @click="$emit('click')">Get data</button>
 </template>
 
 <script>
 export default {
-  name: "BtnGetData",
-  props:['getDataBtnClick'],
-  methods:{
-    btnDataHandler() {
-      this.getDataBtnClick()
-    }
-  }
+  name: "BtnGetData"
 }
 </script>
 

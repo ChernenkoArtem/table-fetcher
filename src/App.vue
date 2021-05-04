@@ -4,7 +4,7 @@
     <h1>Test</h1>
     <hr>
     <BtnGetTable
-        :getDataBtnClick="getDataBtnClick"
+        @click.native="getDataBtnClick"
     />
     <div class="loading" v-if="isLoading">loading...</div>
     <template v-if="!stocksDataError">
