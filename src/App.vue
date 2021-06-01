@@ -7,9 +7,9 @@
         @click.native="getDataBtnClick"
     />
     <div class="loading" v-if="isLoading">loading...</div>
-    <template v-if="!stocksDataError">
+    <template v-if="!this.$store.getters.getStocksDataError">
       <Table
-          :formatedStocksData="formatedStocksData"
+          :formatedStocksData="this.$store.getters.getFormatStocksData"
       />
     </template>
     <div v-else>no data</div>
@@ -18,8 +18,6 @@
 
 <script>
 import BtnGetTable from "@/components/BtnGetTable";
-import simulateAsyncReq from "@/plugins/getDataFunc";
-import {payload} from "@/mocData";
 import Table from "@/components/Table";
 
 export default {
@@ -27,48 +25,13 @@ export default {
   components: {Table, BtnGetTable},
   data(){
     return {
-      stocksData: {} ,
-      formatedStocksData:[],
-      stocksDataError: false,
       isLoading: false
     }
   },
   methods: {
-    async getData() {
-      try {
-        this.stocksDataError = false
-        this.stocksData = await simulateAsyncReq(payload)
-        this.formatedStocksData = this.formatStocksData()
-      } catch (err){
-        this.stocksDataError = true
-        this.formatedStocksData = []
-        console.log('error data',err)
-      }
-    },
-    formatStocksData() {
-      const maxLength = Math.max(this.stocksData.stocks.length, this.stocksData.start.length, this.stocksData.current.length)
-      const arr = []
-      for (let i = 0;i < maxLength;i++){
-        arr.push({
-          stocks: this.stocksData.stocks[i],
-          current: this.normalizeNumber(this.stocksData.current[i]),
-          change:this.normalizeNumber(this.stocksData.start[i].toFixed(2)  - this.stocksData.current[i].toFixed(2),true)
-        })
-      }
-      arr.sort((a,b)=> {
-        return a.stocks.localeCompare(b.stocks);
-      })
-
-      return arr
-    },
-    normalizeNumber(number, flag) {
-      const res = number.toFixed(2)
-      if (flag)  return res >= 0 ? '+' + res : res
-      return res
-    },
     async getDataBtnClick() {
       this.isLoading = true
-      await this.getData()
+      await this.$store.dispatch('getData')
       this.isLoading = false
     }
   }
